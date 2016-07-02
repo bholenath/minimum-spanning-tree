@@ -1,8 +1,6 @@
 # minimum-spanning-tree
 Helps to simulate the minimum spanning tree Dijikstra's algorithm used in real networks
 
-/* This project report is for the Computer Network final Project of Fall 2014, made and compiled by Harshit Bhatt with inputs from Mahesh Kotapalli and Jenny Patel of Group -6. */
-
 The program which I have made try to construct a Minimum Spanning Tree for a certain number of vertices(hosts) and edges(links) 
 that are present initially with us. For the input I have take a file from the internet by providing its URL as the input for collecting data.
 
