@@ -1,58 +1,42 @@
 # minimum-spanning-tree
-Helps to simulate the minimum spanning tree Dijikstra's algorithm used in real networks
+This code simulates the Minimum Spanning Tree (M.S.T) Dijikstra's algorithm used in real networks for routing.
 
-The program which I have made try to construct a Minimum Spanning Tree for a certain number of vertices(hosts) and edges(links) 
-that are present initially with us. For the input I have take a file from the internet by providing its URL as the input for collecting data.
+The program works on an input of certain number of vertices(hosts) and edges(links) that are provided by the user. 
 
-From the file I collected the number of vertices and constructed a double dimension array list which hold edges for each vertex.
+Four files were used to implement this algorithm :
 
-There were four files thaat I have used to work out the whole program namely :
+Mst.java -> the main file of the program which call major functions and display the final result.
 
-Mst.java -> this is the main file of the program which calls functions in other programs to display the result.
-Edge.java -> this file saves the values of every Edge(vertices and edge weight).
-Sorted.java -> this file does all the work of sorting the edges and finally making a single list.
-MinEdges.java -> this file calculates and displays the edges for the Minimum Spanning Tree.
+Edge.java -> this file initilaizes and stores the weight of every edge and its connectivity to respective vertices.
 
-Mst.java only allows to take the input of file and read it for collecting vertices and edges present in our input.
-Objects for every other file are present in the main file to call them for specific purposes.
+Sorted.java -> here I sort all the edges by their weight and arrange them in a list which would be checked in order to form MST.
 
-After getting the total number of vertices in the system I first called the sorted.java file which constructs a double dimension Array 
-list which stores object of every edge to its respective vertex. After this for Every edge an object is made which stores its vertices 
-and edge weight that is made possible by the Edge.java file.
+MinEdges.java -> this file finds the shortest route covering all nodes by checking for loops and cycle.
 
-The values can be collected for any edge by calling certain functions in the Edge class which return vertices and edge weight for that 
-edge. 
+Data is fed through a test file which contains a sample of edges and vertices. Mst.java file divides the list between edges and vertices and pass it to the respective functions.  
 
-The edges are saved by calling addEdge function in sorted.java file to its respective vertex.
+A double dimesnional array is constructed by Sorted.java which stores object for every edge having information about the edge weight and vertices it is connected to.
 
-After this MinEdges.java file was called from main Mst.java file as all the sorted functions in Sorted.java are called from the
-MinEdges.java constructor. First function named remove_Reduntant removes all the edges with same vertices present in a vertex based on
-comparing their weight, so edge with lowest weight was saved and other removed. This also removes if their were any self loops present
-in the network cause self loops can't be present in a Minimum Spanning tree. 
+MinEdges.java file is called from the main file Mst.java. Then from MinEdges.java file Sorted.java is called to get all sorted edges with detail which is returned back to MinEdges.java for generating the MST.
 
-Second function single now moves all the remaining edges into a single array list. 
+In Sorted.java firstly the filtering is performed to remove all non-essential edges which eases the complexity of the algorithm.
 
-After this list_Remove_Duplicate function was called which removes bi-directional edges(eg. 0 -> 3 and 3 -> 0)
-if present depending on the edge weight keeping the lowest weight edge.
+A function named 'remove_Reduntant' remove edges having same vertices based on their weight. Edges that form loop were also remove in this step.
 
-After this the single list was sorted in order of their edge weight so as to make easy to add them to Minimum Spanning tree on 
-comparison.
+As the edges were directional it was important to remove one of the edge in bi-directional edges (e.g., 0 -> 3 and 3 -> 0) based on their weight as they both could lead to an infinite loop of cycle between them.
 
-To get the edges values for comparison in Sorted.java, objects of Edge.java were made respective for each edge through which we get the
-values for each edge.
+A list is now generated from the remaining edges sorted in the ascending order of their weight and is returned to MinEdges.java.
 
-Now the main work of MinEdges file started as we would like to display the data on a periodic basis so I constructed a timer and timer task function which displays Edges present in minimum spanning tree with every second.
+Now the main work of MinEdges file starts. I added a timer to the function which dispalys the current MST on a periodic basis. A timer and timer task function were added which display edges present in Minimum Spanning Tree with every second.
 
-For this I needed to construct another class Running which extends TimerTask class and hence as we override thread run function in it
-which displays the Minimum Spanning tree that has been constructed within those seconds. The edges for minimum spanning tree are saved
-by the name sorted list. Hence as sorted list is the global variable it is displayed for that time whereas other thread is still working on its calculations to extract the minimum spanning tree edges which are being done in the function check_Tree.
+This process works in a multi-threaded enviorment where one thread is concentrated on displaying MST periodically and the other thread working on genrating the MST.
 
-To calculate the edges for minimum spanning tree I initially took the first two edges present in the sorted list which we get from the sorted.java file as the two edges with least weight would surely be present in the minimum spanning tree as we have removed the concept of self-loops. After this another double array list name "arrlist" was initialized which stores the vertices for every vertex if that vertex is present in the minimum spanning tree (eg. if minimum spanning tree has a vertex 0-7 initially, so in the double dimension array list "arrlist" 0 vertex list would store 7 as a vertex in it and 7 would store 0). Now for every new edge from the sorted list, its vertices are compared with the vertices already present in the "arrlist" so as to remove any cycle formation in the network.
+To calculate the edges for minimum spanning tree the two lowest weight edges were required to make a network hence, they were the first to be added for the M.S.T. After this another double array list name "arrlist" was initialized which stores the common vertices which are involved in an edge (eg. if minimum spanning tree has a vertex 0-7 initially, so in the double dimension array list "arrlist" 0 vertex list would store 7 as a vertex in it and 7 would store 0). Now for every new edge from the sorted list its vertices are compared with the vertices already present in the "arrlist" so as to remove any cycle formation in the network.
 
-For eg. if we have two vertices namely "a" and "b" in the new edge taken from sorted list, we would first compare "b" with all the vertices present in the array of respective vertices of "a" (eg. if a=0, b=7 and 0 vertex array has 3,5(which means in the minimum spanning tree 0 has two edges with 3 and 5) vertex present in it, then 7 is compared with vertices present in 3 and 5 array - as 7 cannot be in the 0 vertex array as we don't have bi-directional edges in our network - if there is a match then that edge is neglected for minimum spanning tree as it would result into a cycle. If there is no match then 0 is now compared to vertex arrays of vertices present in 7(if 7 has 2,1 as vertices in its array 0 is compared to the vertices present in 2 and 1 vertex array) whenever we get a match we remove that edge from the contention of being in minimum spanning tree and move to next edge.) Even if after this we didn't get a match we run this process for second time by the run_Recheck function which checks for subsequent vertices in the vertex array for a match for either "a" or "b" respectively with run_Recheck and run_Recheck1 functions. I also made another set of array lists check_a and check_b which keep storing the vertices for whom the algorithm has already checked for with either "a" or "b" so we doesn't run into an infinite loop of rechecking the vertices again and again as every edge has been saved by both its vertices.
+For eg. if we have two vertices namely "a" and "b" in the new edge taken from sorted list, we would first compare "b" with all the vertices having edges with "a" (which are stored in the array 'arraylist') and vice versa, so as to verify if this new edge would not create a cycle and hence, whether it could be added to the M.S.T.
 
-If we still didn't get a match after using subsequent search which ends if there is no edge remains in a vertex array to look for, we add that edge to the minimum spanning tree and add its vertices to their respective arrays for further edge checking. 
+(eg. if a has a common edge with vertex 0 and b has edge with vertex 7. Now we see the edges common with vertex 0. Say vertex 0 has vertex 3 and 5 already added into the M.S.T. We now compare vertex 7 with vertices present in 3 and 5 array. If there is a match then the edge a-b is neglected for being in M.S.T. as it would result into a cycle. If there is no match then vice versa 0 is compared to vertices present in array 'arraylist' of 7. Even if after this we didn't get a match we run this process unitl all subsequent vertices of a and b vertex are checked and if there is still no vertex common we could add the edge 'a-b' to the M.S.T. The vertices for whom this process is already done are marked as done so as we not repeat there comparison if they come up in a new edge.
 
-We continue this process of checking for new edges to be added in the minimum spanning tree until we get (no. of vertices - 1) edges as it is the maximum number of edges that can be present in a minimum spanning tree.
+We continue this process of checking for new edges to be added in the M.S.T. until we get (no. of vertices - 1) edges as it is the maximum number of edges that can be present in a M.S.T.
 
 Finally after concluding this we have our Minimum Spanning tree with all its edges.
